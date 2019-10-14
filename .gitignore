@@ -1,6 +1,11 @@
 # Don't track content of these folders
+roi_concatenated_four_slices
+roi_concatenated_four_slices/
+incorrect_roi_images
 incorrect_roi_images/
+non_defective_xml_files
 non_defective_xml_files/
+original_dataset
 original_dataset/
 .idea/
 __pycache__/

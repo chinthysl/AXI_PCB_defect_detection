@@ -3,26 +3,31 @@
 This repo contains data pre-processing, classification and defect detection methodologies for images from **Advance XRay Inspection** from multi-layer PCB boards.
 
 - [AXI_PCB_defect_detection](#AXI_PCB_defect_detection)
+  * [General guidelines for contributors](#general-guidelines)
   * [Project file structure](#project-file-structure)
   * [Solution Overview](#solution-overview)
   * [Code explanation](#code-explanation)
     + [solder_joint.py](#solder_joint)
     + [board_view.py](#board_view)
-    - [solder_joint_container.py](#solder_joint_container)
+    + [solder_joint_container.py](#solder_joint_container)
     + [main.py](#main)
   * [DVC integration](#dvc-integration)
+
+## General Guidelines for contributors
+- Please add your data folders into the ignore file until DVC is setup
+- Don't do `git add --all`. Please be aware of what you commit.
 
 ## Project file structure
 
 ```bash
-├── incorrect_roi_images/           # put all incorrect roi images inside 
-├── non_defective_xml_files/        # put xml labels for non defective rois
-├── original_dataset/               # dir for saving experiments
+├── non_defective_xml_files/        # put xml labels for non defective rois here
+├── original_dataset/               # put two image folders and PTH2_reviewed.csv inside this
 ├── board_view.py                   # python class for a unique PCB BoardView
 ├── constants.py                    # constant values for the project
-├── main.py                         # script for create objects and run ROI concatenation
-├── solder_joint.py                 # dir for saving experiments
-├── solder_joint_container.py       # dir for saving experiments
+├── incorrect_roi_images.p          # this file contains file names of all incorrect rois
+├── main.py                         # script for creating objects and run ROI concatenation
+├── solder_joint.py                 # python class for a unique PCB SolderJoint
+├── solder_joint_container.py       # python class containing all BoardView and SolderJoint objs
 ├── solder_joint_container_obj.p    # saved pickle obj for SolderJointContainer class
 └── utils_basics.py                 # helper functions
 ```

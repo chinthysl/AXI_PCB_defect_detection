@@ -22,11 +22,11 @@ if CREATE_OBJ:
 with open('solder_joint_container_obj.p', 'rb') as input_handle:
     solder_joint_container_obj = pickle.load(input_handle)
 
-# print details of BoardView objects and SolderJoint objects
-solder_joint_container_obj.print_container_details()
-
 # this method will save concat 2d cleaned images in a directory
 solder_joint_container_obj.save_concat_images_first_four_slices()
+
+# print details of BoardView objects and SolderJoint objects
+solder_joint_container_obj.print_container_details()
 
 # # this method will create a directory full of images with marked rois
 # solder_joint_container_obj.mark_all_images_with_rois()

@@ -160,9 +160,15 @@ class SolderJointContainer:
                 board_view_obj.add_solder_joint('unknown', -1, 'normal', [x_min_i, y_min_i, x_max_i, y_max_i])
                 board_view_obj.add_slices_to_solder_joints()
 
+    @staticmethod
+    def create_incorrect_roi_pickle_file(self):
+        images_list = os.listdir('./incorrect_roi_images')
+        with open('incorrect_roi_images.p', 'wb') as filehandle:
+            pickle.dump(images_list, filehandle)
+
     def find_flag_incorrect_roi_board_view_objs(self):
-        incorrect_roi_image_path = './incorrect_roi_images'
-        incorrect_roi_list = os.listdir(incorrect_roi_image_path)
+        with open('incorrect_roi_images.p', 'rb') as filehandle:
+            incorrect_roi_list = pickle.load(filehandle)
         temp_list = []
         for image_name in incorrect_roi_list:
             temp_list.append(self.new_image_name_mapping_dict[image_name][:-5])
@@ -249,24 +255,3 @@ class SolderJointContainer:
         print('board_views:', board_views, 'solder_joints:', solder_joints, 'missing_defects:', missing_defects,
               'short_defects:', short_defects, 'insuf_defects:', insuf_defects, 'normal_defects:', normal_defects)
 
-    def write_csv_defect_roi_images(self):
-        with open('csv_dict.pickle', 'rb') as handle:
-            csv_dict_loaded = pickle.load(handle)
-        logging.info("Num of image locations in dict: %d", len(csv_dict_loaded.keys()))
-
-        remove_image_location_list = []
-        incorrect_roi_list = os.listdir('./incorrect_roi_images')
-        print(incorrect_roi_list[0])
-        for image_name in incorrect_roi_list:
-            temp_name = self.new_image_name_mapping_dict[image_name][:-5]
-            for i in range(6):
-                slice_name = temp_name + str(i) + '.jpg'
-                if os.path.isfile(slice_name):
-                    remove_image_location_list.append(slice_name)
-
-        location_set = set(remove_image_location_list)
-        unique_location_list = list(location_set)
-
-        with open('incorrect_roi_images.csv', 'w') as f:
-            for item in unique_location_list:
-                f.write("%s\n" % item)
