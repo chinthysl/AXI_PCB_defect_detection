@@ -3,15 +3,34 @@
 This repo contains data pre-processing, classification and defect detection methodologies for images from **Advance XRay Inspection** from multi-layer PCB boards.
 
 - [AXI_PCB_defect_detection](#AXI_PCB_defect_detection)
+  * [Details of the dataset](#general-guidelines)
   * [General guidelines for contributors](#general-guidelines)
   * [Project file structure](#project-file-structure)
-  * [Solution Overview](#solution-overview)
   * [Code explanation](#code-explanation)
     + [solder_joint.py](#solder_joint)
     + [board_view.py](#board_view)
     + [solder_joint_container.py](#solder_joint_container)
     + [main.py](#main)
   * [DVC integration](#dvc-integration)
+
+## Details of the dataset
+- Distinct .jpg images including all slices – 32377
+- Distinct ROIs with labels – 92208
+- PCB types – 17
+- Distinct XRay board views – 8063
+- Views containing correct ROIs – 6112, Views containing incorrect ROIs – 1951
+- Slices per XRay board view (slices per physical solder joint) – 3, 4, 5, 6
+- Number of solder joints – 22872
+- Correct joints – 15613,  Incorrect joints – 7259
+- Correct-square solder joints – 14672
+- missing - 1496, short - 5605, insufficient - 4691 normal - 2880
+- 3 sliced joints - 5471, 4 sliced joints - 8590, 5 sliced joints - 97, 6 sliced joints - 277
+
+####Special Notes:
+- A single XRay board view has multiple ROIs marked.
+- A single defective ROI(solder joint) can have multiple defect labels.
+- If a XRay view contains one incorrect ROI, all solder joints in that view are considered as incorrect.
+
 
 ## General Guidelines for contributors
 - Please add your data folders into the ignore file until DVC is setup

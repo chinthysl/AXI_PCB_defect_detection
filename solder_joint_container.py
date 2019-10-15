@@ -302,3 +302,53 @@ class SolderJointContainer:
               'joints_with_3_slices:', joints_with_3_slices, 'joints_with_4_slices:', joints_with_4_slices,
               'joints_with_5_slices', joints_with_5_slices, 'joints_with_6_slices', joints_with_6_slices)
 
+        board_views = 0
+        solder_joints = 0
+        missing_defects = 0
+        short_defects = 0
+        insuf_defects = 0
+        normal_defects = 0
+
+        joints_with_1_slices = 0
+        joints_with_2_slices = 0
+        joints_with_3_slices = 0
+        joints_with_4_slices = 0
+        joints_with_5_slices = 0
+        joints_with_6_slices = 0
+
+        for board_view_obj in self.board_view_dict.values():
+            if not board_view_obj.is_incorrect_view:
+                board_views += 1
+                for solder_joint_obj in board_view_obj.solder_joint_dict.values():
+                    if solder_joint_obj.is_square:
+                        solder_joints += 1
+
+                        if len(solder_joint_obj.slice_dict.keys()) == 1:
+                            joints_with_1_slices += 1
+                        if len(solder_joint_obj.slice_dict.keys()) == 2:
+                            joints_with_2_slices += 1
+                        if len(solder_joint_obj.slice_dict.keys()) == 3:
+                            joints_with_3_slices += 1
+                        if len(solder_joint_obj.slice_dict.keys()) == 4:
+                            joints_with_4_slices += 1
+                        if len(solder_joint_obj.slice_dict.keys()) == 5:
+                            joints_with_5_slices += 1
+                        if len(solder_joint_obj.slice_dict.keys()) == 6:
+                            joints_with_6_slices += 1
+
+                        label = solder_joint_obj.defect_name
+                        if label == 'normal':
+                            normal_defects += 1
+                        if label == 'missing':
+                            missing_defects += 1
+                        if label == 'insufficient':
+                            insuf_defects += 1
+                        if label == 'short':
+                            short_defects += 1
+
+        print('*****correct square roi details*****')
+        print('board_views:', board_views, 'solder_joints:', solder_joints, 'missing_defects:', missing_defects,
+              'short_defects:', short_defects, 'insuf_defects:', insuf_defects, 'normal_defects:', normal_defects)
+        print('joints_with_1_slices:', joints_with_1_slices, 'joints_with_2_slices:', joints_with_1_slices,
+              'joints_with_3_slices:', joints_with_3_slices, 'joints_with_4_slices:', joints_with_4_slices,
+              'joints_with_5_slices', joints_with_5_slices, 'joints_with_6_slices', joints_with_6_slices)
