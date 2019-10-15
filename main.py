@@ -24,6 +24,7 @@ with open('solder_joint_container_obj.p', 'rb') as input_handle:
 
 # # this method will save concat 2d cleaned images in a directory
 # solder_joint_container_obj.save_concat_images_first_four_slices()
+solder_joint_container_obj.save_concat_images_all_slices_2d()
 
 # print details of BoardView objects and SolderJoint objects
 solder_joint_container_obj.print_container_details()

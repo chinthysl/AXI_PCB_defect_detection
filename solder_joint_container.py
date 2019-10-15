@@ -4,6 +4,7 @@ import os
 import csv
 import re
 import cv2
+import sys
 
 from constants import DEFECT_NAMES_DICT
 from utils_basic import chk_n_mkdir
@@ -139,9 +140,13 @@ class SolderJointContainer:
                         logging.debug('height < width:' + str(height) + '/' + str(width))
                         continue
                     else:
-                        y_min_i = y_min_i - (width - height) // 2 if (width - height) % 2 == 0 else y_min_i - (
-                                width - height) // 2 - 1
-                        y_max_i = y_max_i + (width - height) // 2
+                        if (width - height) % 2 == 0:
+                            y_min_i = y_min_i - (width - height) // 2
+                            y_max_i = y_max_i + (width - height) // 2
+                        else:
+                            y_min_i = y_min_i - (width - height) // 2 - 1
+                            y_max_i = y_max_i + (width - height) // 2
+
                         height = y_max_i - y_min_i
                         logging.debug('new height/width:' + str(height) + '/' + str(width))
 
@@ -151,11 +156,19 @@ class SolderJointContainer:
                         logging.debug('height > width:' + str(height) + '/' + str(width))
                         continue
                     else:
-                        x_min_i = x_min_i - (height - width) // 2 if (height - width) % 2 == 0 else x_min_i - (
-                                height - width) // 2 - 1
-                        x_max_i = x_max_i + (height - width) // 2
+                        if (height - width) % 2 == 0:
+                            x_min_i = x_min_i - (height - width) // 2
+                            x_max_i = x_max_i + (height - width) // 2
+                        else:
+                            x_min_i = x_min_i - (height - width) // 2 - 1
+                            x_max_i = x_max_i + (height - width) // 2
+
                         width = x_max_i - x_min_i
                         logging.debug('new height/width:' + str(height) + '/' + str(width))
+
+                if not (x_max_i - x_min_i) == (y_max_i - y_min_i):
+                    logging.error('w,h,xmin,xmax,ymin,ymax: %d,%d,%d,%d,%d,%d', width, height, x_min_i, x_max_i, y_min_i, y_max_i)
+                    sys.exit()
 
                 board_view_obj.add_solder_joint('unknown', -1, 'normal', [x_min_i, y_min_i, x_max_i, y_max_i])
                 board_view_obj.add_slices_to_solder_joints()
@@ -199,6 +212,24 @@ class SolderJointContainer:
                         cv2.imwrite(destination_image_path, concat_image)
                         logging.debug('saving concatenated image, joint type: %s', label)
         logging.info('saved images of concatenated 4 slices in 2d')
+
+    def save_concat_images_all_slices_2d(self):
+        chk_n_mkdir('./roi_concatenated_all_slices_2d/short/')
+        chk_n_mkdir('./roi_concatenated_all_slices_2d/insufficient/')
+        chk_n_mkdir('./roi_concatenated_all_slices_2d/missing/')
+        chk_n_mkdir('./roi_concatenated_all_slices_2d/normal/')
+        img_count = 0
+        for board_view_obj in self.board_view_dict.values():
+            if not board_view_obj.is_incorrect_view:
+                logging.debug('Concatenating images in board_view_obj: %s', board_view_obj.view_identifier)
+                for solder_joint_obj in board_view_obj.solder_joint_dict.values():
+                    concat_image, label = solder_joint_obj.concat_pad_all_slices_2d()
+                    if concat_image is not None:
+                        img_count += 1
+                        destination_image_path = 'roi_concatenated_all_slices_2d/' + label + '/' + str(img_count) + '.jpg'
+                        cv2.imwrite(destination_image_path, concat_image)
+                        logging.debug('saving concatenated image, joint type: %s', label)
+        logging.info('saved images of concatenated 6 slices in 2d')
 
     def print_container_details(self):
         board_views = 0
