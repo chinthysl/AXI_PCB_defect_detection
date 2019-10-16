@@ -26,7 +26,7 @@ This repo contains data pre-processing, classification and defect detection meth
 - missing - 1496, short - 5605, insufficient - 4691 normal - 2880
 - 3 sliced joints - 5471, 4 sliced joints - 8590, 5 sliced joints - 97, 6 sliced joints - 277
 
-####Special Notes:
+#### Special Notes:
 - A single XRay board view has multiple ROIs marked.
 - A single defective ROI(solder joint) can have multiple defect labels.
 - If a XRay view contains one incorrect ROI, all solder joints in that view are considered as incorrect.

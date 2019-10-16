@@ -195,42 +195,6 @@ class SolderJointContainer:
                 board_view_obj.is_incorrect_view = True
                 logging.debug('marked board view %s as incorrect', board_view_obj.view_identifier)
 
-    def save_concat_images_first_four_slices(self, width=128, height=128):
-        chk_n_mkdir('./roi_concatenated_four_slices/short/')
-        chk_n_mkdir('./roi_concatenated_four_slices/insufficient/')
-        chk_n_mkdir('./roi_concatenated_four_slices/missing/')
-        chk_n_mkdir('./roi_concatenated_four_slices/normal/')
-        img_count = 0
-        for board_view_obj in self.board_view_dict.values():
-            if not board_view_obj.is_incorrect_view:
-                logging.debug('Concatenating images in board_view_obj: %s', board_view_obj.view_identifier)
-                for solder_joint_obj in board_view_obj.solder_joint_dict.values():
-                    concat_image, label = solder_joint_obj.concat_first_four_slices_and_resize(width, height)
-                    if concat_image is not None:
-                        img_count += 1
-                        destination_image_path = 'roi_concatenated_four_slices/' + label + '/' + str(img_count) + '.jpg'
-                        cv2.imwrite(destination_image_path, concat_image)
-                        logging.debug('saving concatenated image, joint type: %s', label)
-        logging.info('saved images of concatenated 4 slices in 2d')
-
-    def save_concat_images_all_slices_2d(self):
-        chk_n_mkdir('./roi_concatenated_all_slices_2d/short/')
-        chk_n_mkdir('./roi_concatenated_all_slices_2d/insufficient/')
-        chk_n_mkdir('./roi_concatenated_all_slices_2d/missing/')
-        chk_n_mkdir('./roi_concatenated_all_slices_2d/normal/')
-        img_count = 0
-        for board_view_obj in self.board_view_dict.values():
-            if not board_view_obj.is_incorrect_view:
-                logging.debug('Concatenating images in board_view_obj: %s', board_view_obj.view_identifier)
-                for solder_joint_obj in board_view_obj.solder_joint_dict.values():
-                    concat_image, label = solder_joint_obj.concat_pad_all_slices_2d()
-                    if concat_image is not None:
-                        img_count += 1
-                        destination_image_path = 'roi_concatenated_all_slices_2d/' + label + '/' + str(img_count) + '.jpg'
-                        cv2.imwrite(destination_image_path, concat_image)
-                        logging.debug('saving concatenated image, joint type: %s', label)
-        logging.info('saved images of concatenated 6 slices in 2d')
-
     def print_container_details(self):
         board_views = 0
         solder_joints = 0
@@ -383,3 +347,102 @@ class SolderJointContainer:
         print('joints_with_1_slices:', joints_with_1_slices, 'joints_with_2_slices:', joints_with_1_slices,
               'joints_with_3_slices:', joints_with_3_slices, 'joints_with_4_slices:', joints_with_4_slices,
               'joints_with_5_slices', joints_with_5_slices, 'joints_with_6_slices', joints_with_6_slices)
+
+    def save_concat_images_first_four_slices_2d(self):
+        chk_n_mkdir('./data/roi_concatenated_four_slices_2d/short/')
+        chk_n_mkdir('./data/roi_concatenated_four_slices_2d/insufficient/')
+        chk_n_mkdir('./data/roi_concatenated_four_slices_2d/missing/')
+        chk_n_mkdir('./data/roi_concatenated_four_slices_2d/normal/')
+        img_count = 0
+        for board_view_obj in self.board_view_dict.values():
+            if not board_view_obj.is_incorrect_view:
+                logging.debug('Concatenating images in board_view_obj: %s', board_view_obj.view_identifier)
+                for solder_joint_obj in board_view_obj.solder_joint_dict.values():
+                    concat_image, label = solder_joint_obj.concat_first_four_slices_2d()
+                    if concat_image is not None:
+                        img_count += 1
+                        destination_image_path = './data/roi_concatenated_four_slices/' + label + '/' + str(img_count) \
+                                                 + '.jpg'
+                        cv2.imwrite(destination_image_path, concat_image)
+                        logging.debug('saving concatenated image, joint type: %s', label)
+        logging.info('saved images of concatenated 4 slices in 2d')
+
+    def save_concat_images_first_four_slices_2d_pickle(self):
+        image_dict = {}
+        img_count = 0
+        for board_view_obj in self.board_view_dict.values():
+            if not board_view_obj.is_incorrect_view:
+                logging.debug('Concatenating images in board_view_obj: %s', board_view_obj.view_identifier)
+                for solder_joint_obj in board_view_obj.solder_joint_dict.values():
+                    concat_image, label = solder_joint_obj.concat_first_four_slices_2d()
+                    if concat_image is not None:
+                        img_count += 1
+                        image_dict[img_count] = [concat_image, label]
+
+        with open('./data/rois_first_four_slices_2d.p', 'wb') as handle:
+            pickle.dump(image_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        logging.info('saved images of concatenated 4 slices in 2d to pickle')
+
+    def save_concat_images_first_four_slices_3d_pickle(self):
+        image_dict = {}
+        img_count = 0
+        for board_view_obj in self.board_view_dict.values():
+            if not board_view_obj.is_incorrect_view:
+                logging.debug('Concatenating images in board_view_obj: %s', board_view_obj.view_identifier)
+                for solder_joint_obj in board_view_obj.solder_joint_dict.values():
+                    stacked_np_array, label = solder_joint_obj.concat_first_four_slices_3d()
+                    if stacked_np_array is not None:
+                        img_count += 1
+                        image_dict[img_count] = [stacked_np_array, label]
+
+        with open('./data/rois_first_four_slices_3d.p', 'wb') as handle:
+            pickle.dump(image_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        logging.info('saved images of concatenated 4 slices in 3d to pickle')
+
+    def save_concat_images_all_slices_2d_pickle(self):
+        image_dict = {}
+        img_count = 0
+        for board_view_obj in self.board_view_dict.values():
+            if not board_view_obj.is_incorrect_view:
+                logging.debug('Concatenating images in board_view_obj: %s', board_view_obj.view_identifier)
+                for solder_joint_obj in board_view_obj.solder_joint_dict.values():
+                    concat_image, label = solder_joint_obj.concat_pad_all_slices_2d()
+                    if concat_image is not None:
+                        img_count += 1
+                        image_dict[img_count] = [concat_image, label]
+
+        with open('./data/rois_all_slices_2d.p', 'wb') as handle:
+            pickle.dump(image_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        logging.info('saved images of concatenated 6 slices in 2d to pickle')
+
+    def save_concat_images_all_slices_3d_pickle(self):
+        image_dict = {}
+        img_count = 0
+        for board_view_obj in self.board_view_dict.values():
+            if not board_view_obj.is_incorrect_view:
+                logging.debug('Concatenating images in board_view_obj: %s', board_view_obj.view_identifier)
+                for solder_joint_obj in board_view_obj.solder_joint_dict.values():
+                    stacked_np_array, label = solder_joint_obj.concat_pad_all_slices_3d()
+                    if stacked_np_array is not None:
+                        img_count += 1
+                        image_dict[img_count] = [stacked_np_array, label]
+
+        with open('./data/rois_all_slices_3d.p', 'wb') as handle:
+            pickle.dump(image_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        logging.info('saved images of concatenated 6 slices in 3d to pickle')
+
+    def save_concat_images_all_slices_inverse_3d_pickle(self):
+        image_dict = {}
+        img_count = 0
+        for board_view_obj in self.board_view_dict.values():
+            if not board_view_obj.is_incorrect_view:
+                logging.debug('Concatenating images in board_view_obj: %s', board_view_obj.view_identifier)
+                for solder_joint_obj in board_view_obj.solder_joint_dict.values():
+                    stacked_np_array, label = solder_joint_obj.concat_pad_all_slices_inverse_3d()
+                    if stacked_np_array is not None:
+                        img_count += 1
+                        image_dict[img_count] = [stacked_np_array, label]
+
+        with open('./data/rois_all_slices_inverse_3d.p', 'wb') as handle:
+            pickle.dump(image_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        logging.info('saved images of concatenated 6 inverse slices in 3d to pickle')
