@@ -1,11 +1,9 @@
 # Don't track content of these folders
-images
-data
+images_roi_marked
 incorrect_roi_images
-non_defective_xml_files
 original_dataset
-.idea/
-__pycache__/
+.idea
+__pycache__
 
 
 # Compiled source #
@@ -39,3 +37,4 @@ __pycache__/
 *.rar
 *.tar
 *.zip
+/data
