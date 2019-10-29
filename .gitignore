@@ -1,4 +1,5 @@
 # Don't track content of these folders
+images
 data
 incorrect_roi_images
 non_defective_xml_files
