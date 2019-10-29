@@ -1,0 +1,7 @@
+md5: 95ba84bc7f7a3f57df1fe8fb88041c81
+outs:
+- md5: 09e023a9b75c98dbc0445c4852db8bf1.dir
+  path: non_defective_xml_files
+  cache: true
+  metric: false
+  persist: false
