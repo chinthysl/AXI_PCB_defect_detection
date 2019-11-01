@@ -414,7 +414,7 @@ class SolderJointContainer:
                     concat_image, label = solder_joint_obj.concat_first_four_slices_2d()
                     if concat_image is not None:
                         img_count += 1
-                        destination_image_path = './data/roi_concatenated_four_slices/' + label + '/' + str(img_count) \
+                        destination_image_path = './data/roi_concatenated_four_slices_2d/' + label + '/' + str(img_count) \
                                                  + '.jpg'
                         cv2.imwrite(destination_image_path, concat_image)
                         logging.debug('saving concatenated image, joint type: %s', label)
