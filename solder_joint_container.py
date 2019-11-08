@@ -27,6 +27,7 @@ class SolderJointContainer:
             for row in csv_reader:
                 component_name = row["component"]
                 defect_id = int(row["defect_type_id"])
+                oprStatus = int(row["oprStatus"])
                 defect_name = DEFECT_NAMES_DICT[defect_id]
                 roi = [int(float(str)) for str in row["roi_original"].split()]
                 file_location = 'original_dataset\\' + row["image_filename"].strip('C:\Projects\pia-test\\')
@@ -40,19 +41,40 @@ class SolderJointContainer:
                     logging.debug('adding new BoardView obj to the board_view_dict')
                     board_view_obj = BoardView(view_identifier)
                     self.board_view_dict[view_identifier] = board_view_obj
+                # use the oprStatus column to label the data
+                if oprStatus == 1:
+                    board_view_obj.add_solder_joint(component_name, -1, "normal", roi)
+                    # csv_details_dict is only made for file tracking purpose
+                    if file_location in self.csv_details_dict.keys():
+                        self.csv_details_dict[file_location].append([component_name, -1, "normal", roi])
+                    else:
+                        self.csv_details_dict[file_location] = []
+                        self.csv_details_dict[file_location].append([component_name, -1, "normal", roi])
 
-                board_view_obj.add_solder_joint(component_name, defect_id, defect_name, roi)
-
-                # csv_details_dict is only made for file tracking purpose
-                if file_location in self.csv_details_dict.keys():
-                    self.csv_details_dict[file_location].append([component_name, defect_id, defect_name, roi])
+                    logging.debug('csv row details, component_name:%s, defect_name:%s, roi:%d,%d,%d,%d', component_name,
+                                  "normal", roi[0], roi[1], roi[2], roi[3])
                 else:
-                    self.csv_details_dict[file_location] = []
-                    self.csv_details_dict[file_location].append([component_name, defect_id, defect_name, roi])
+                    board_view_obj.add_solder_joint(component_name, defect_id, defect_name, roi)
+                    # csv_details_dict is only made for file tracking purpose
+                    if file_location in self.csv_details_dict.keys():
+                        self.csv_details_dict[file_location].append([component_name, defect_id, defect_name, roi])
+                    else:
+                        self.csv_details_dict[file_location] = []
+                        self.csv_details_dict[file_location].append([component_name, defect_id, defect_name, roi])
 
-                logging.debug('csv row details, component_name:%s, defect_name:%s, roi:%d,%d,%d,%d', component_name,
-                              defect_name, roi[0], roi[1], roi[2], roi[3])
+                    logging.debug('csv row details, component_name:%s, defect_name:%s, roi:%d,%d,%d,%d', component_name,
+                                  defect_name, roi[0], roi[1], roi[2], roi[3])
 
+                # board_view_obj.add_solder_joint(component_name, defect_id, defect_name, roi)
+                # # csv_details_dict is only made for file tracking purpose
+                # if file_location in self.csv_details_dict.keys():
+                #     self.csv_details_dict[file_location].append([component_name, defect_id, defect_name, roi])
+                # else:
+                #     self.csv_details_dict[file_location] = []
+                #     self.csv_details_dict[file_location].append([component_name, defect_id, defect_name, roi])
+                #
+                # logging.debug('csv row details, component_name:%s, defect_name:%s, roi:%d,%d,%d,%d', component_name,
+                #               defect_name, roi[0], roi[1], roi[2], roi[3])
             for idx, file_loc in enumerate(self.csv_details_dict.keys()):
                 raw_image_name = file_loc[-12:]
                 image_name_with_idx = str(idx) + "_" + raw_image_name
@@ -356,22 +378,24 @@ class SolderJointContainer:
                 if val_list[1] == 'normal':
                     normal += 1
 
-            print('after concat 4 slices, missing:', missing, 'short:', short, 'insufficient:', insuf, 'normal:', normal)
+            print('after concat 4 slices, missing:', missing, 'short:', short, 'insufficient:', insuf, 'normal:',
+                  normal)
 
-        with open('./data/rois_all_slices_3d.p', 'rb') as handle:
-            img_dict = pickle.load(handle)
-            missing, short, insuf, normal = 0, 0, 0, 0
-            for val_list in img_dict.values():
-                if val_list[1] == 'missing':
-                    missing += 1
-                if val_list[1] == 'short':
-                    short += 1
-                if val_list[1] == 'insufficient':
-                    insuf += 1
-                if val_list[1] == 'normal':
-                    normal += 1
-
-            print('after concat all slices, missing:', missing, 'short:', short, 'insufficient:', insuf, 'normal:', normal)
+        # with open('./data/rois_all_slices_3d.p', 'rb') as handle:
+        #     img_dict = pickle.load(handle)
+        #     missing, short, insuf, normal = 0, 0, 0, 0
+        #     for val_list in img_dict.values():
+        #         if val_list[1] == 'missing':
+        #             missing += 1
+        #         if val_list[1] == 'short':
+        #             short += 1
+        #         if val_list[1] == 'insufficient':
+        #             insuf += 1
+        #         if val_list[1] == 'normal':
+        #             normal += 1
+        #
+        #     print('after concat all slices, missing:', missing, 'short:', short, 'insufficient:', insuf, 'normal:',
+        #           normal)
 
     def print_solder_joint_resolution_details(self):
         res_dict = {}
@@ -399,7 +423,7 @@ class SolderJointContainer:
         for key in res_dict.keys():
             sum += key * res_dict[key]
             count += res_dict[key]
-        print('mean:', sum/count)
+        print('mean:', sum / count)
 
     def save_concat_images_first_four_slices_2d(self):
         chk_n_mkdir('./data/roi_concatenated_four_slices_2d/short/')
@@ -414,7 +438,8 @@ class SolderJointContainer:
                     concat_image, label = solder_joint_obj.concat_first_four_slices_2d()
                     if concat_image is not None:
                         img_count += 1
-                        destination_image_path = './data/roi_concatenated_four_slices_2d/' + label + '/' + str(img_count) \
+                        destination_image_path = './data/roi_concatenated_four_slices_2d/' + label + '/' + str(
+                            img_count) \
                                                  + '.jpg'
                         cv2.imwrite(destination_image_path, concat_image)
                         logging.debug('saving concatenated image, joint type: %s', label)
