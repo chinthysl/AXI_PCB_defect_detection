@@ -13,7 +13,7 @@ This repo contains data pre-processing, classification and defect detection meth
     + [main.py](#main)
   * [DVC integration](#dvc-integration)
 
-## Details of the dataset
+## Details of the proprietory dataset
 - Distinct .jpg images including all slices – 32377
 - Distinct ROIs with labels – 92208
 - PCB types – 17
@@ -135,4 +135,4 @@ This repo contains data pre-processing, classification and defect detection meth
 
 ## DVC integration
 
-This section will explains about setting up the data version controlling and storage for the project. Currently we don't do DVC.
+This section will explains about setting up the data version controlling and storage for the project. Data version control is integrated in this project. You can simple train any model by changing parameters of the neural network models. After training you'll see changes in data folders. DVC commit those changes followed by a git commit. Trained models and data will be tracked by a local DVC storage.
