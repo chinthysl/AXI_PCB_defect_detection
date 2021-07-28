@@ -1,6 +1,17 @@
 # AXI_PCB_defect_detection
 
 This repo contains data pre-processing, classification and defect detection methodologies for images from **Advance XRay Inspection** from multi-layer PCB boards.
+Please go through our research paper if you need more details and be kind enough to Cite it if you are going to use this implementation.
+https://ieeexplore.ieee.org/abstract/document/9442142/?casa_token=FNPEvLNODrgAAAAA:Lwm3mFCDg-BgJiSLl1uhefLUv_ApdkNBMbwECzTi1KEGnGX1PohgRLILGQKf3l7Dugr-vuQ7gDZdt4U
+@inproceedings{zhang2020deep,
+  title={Deep Learning Based Defect Detection for Solder Joints on Industrial X-Ray Circuit Board Images},
+  author={Zhang, Qianru and Zhang, Meng and Gamanayake, Chinthaka and Yuen, Chau and Geng, Zehao and Jayasekaraand, Hirunima and Zhang, Xuewen and Woo, Chia-wei and Low, Jenny and Liu, Xiang},
+  booktitle={2020 IEEE 18th International Conference on Industrial Informatics (INDIN)},
+  volume={1},
+  pages={74--79},
+  year={2020},
+  organization={IEEE}
+}
 
 - [AXI_PCB_defect_detection](#AXI_PCB_defect_detection)
   * [Details of the dataset](#general-guidelines)
