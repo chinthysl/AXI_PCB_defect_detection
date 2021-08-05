@@ -51,18 +51,8 @@ class SolderJoint:
                 return None, None
 
             img = cv2.imread(self.slice_dict[slice_id])
-            # there's a bug here. image slicing doesn't give a perfect square sometimes
             img_roi = img[self.y_min:self.y_max, self.x_min:self.x_max]
-            img_roi_gray = cv2.cvtColor(img_roi, cv2.COLOR_BGR2GRAY)
-            if img_roi_gray is None:
-                logging.error('Slice read is None, canceling concatenation')
-                return None, None
-            resized_image = cv2.resize(img_roi_gray, (128, 128), interpolation=cv2.INTER_AREA)
-
-            if resized_image is None:
-                logging.error('Error occured in opencv ROI extraction')
-                return None, None
-            slices_list[slice_id] = resized_image
+            slices_list[slice_id] = img_roi
 
         im_h1 = cv2.hconcat(slices_list[0:2])
         im_h2 = cv2.hconcat(slices_list[2:4])
@@ -71,9 +61,9 @@ class SolderJoint:
         if im_concat is None:
             logging.error('Error occured in opencv ROI concat, is none, skipping concatenation')
             return None, None
-
+        resized_image = cv2.resize(im_concat, (128, 128), interpolation=cv2.INTER_AREA)
         logging.debug('First 4 slices available, concatenation done')
-        return im_concat, self.defect_name
+        return resized_image, self.defect_name
 
     def concat_first_four_slices_2d_4rotated(self):
         logging.debug('start concatenating image, joint type: %s', self.defect_name)
